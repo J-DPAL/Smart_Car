@@ -1,0 +1,5 @@
+paho-mqtt>=1.6.1
+python-dateutil>=2.8.2
+requests>=2.28.0
+gpiozero>=1.7.0 ; platform_system=='Linux'
+RPi.GPIO>=0.7.0 ; platform_system=='Linux'
