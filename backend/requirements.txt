@@ -1,0 +1,10 @@
+paho-mqtt
+gpiozero
+picamera2
+psycopg2-binary
+sqlalchemy
+python-dotenv
+requests
+schedule
+flask
+gunicorn
