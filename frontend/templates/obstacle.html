@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero" style="margin-top: 20px; margin-bottom: 30px;">
+    <h1>🚧 Obstacle Avoidance System</h1>
+    <p style="font-size: 1.1em; color: #666;">Autonomous navigation with collision prevention</p>
+</div>
+
+<!-- Status Card -->
+<div class="card" style="text-align: center; max-width: 500px;">
+    <div id="obstacleStatus" class="mode-status">
+        <div class="status-icon">🔄</div>
+        <div class="status-text">Checking status...</div>
+    </div>
+</div>
+
+<!-- Control Card -->
+<div class="card">
+    <h2>🎮 Obstacle Avoidance Controls</h2>
+    <p>The obstacle avoidance system is <strong>active by default</strong>. Use these controls to start or stop the autonomous navigation algorithm.</p>
+    
+    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px; flex-wrap: wrap;">
+        <button class="btn btn-success" onclick="startObstacleAvoidance()" id="startBtn">
+            ▶️ Start Obstacle Avoidance
+        </button>
+        <button class="btn btn-danger" onclick="stopObstacleAvoidance()" id="stopBtn">
+            ⏹️ Stop Obstacle Avoidance
+        </button>
+    </div>
+    
+    <div id="controlMessage" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
+</div>
+
+<!-- Information Card -->
+<div class="card">
+    <h3>ℹ️ How It Works</h3>
+    <ul style="line-height: 1.8; font-size: 1.05em;">
+        <li><strong>Ultrasonic Sensor:</strong> Continuously measures distance to obstacles</li>
+        <li><strong>Automatic Response:</strong> Car stops and navigates around obstacles</li>
+        <li><strong>Default Mode:</strong> Obstacle avoidance is enabled automatically when the car starts</li>
+        <li><strong>Safety Feature:</strong> Prevents collisions during autonomous operation</li>
+    </ul>
+</div>
+
+<!-- Live Sensor Data -->
+<div class="card">
+    <h3>📡 Ultrasonic Sensor Reading</h3>
+    <div style="text-align: center; padding: 20px;">
+        <div style="font-size: 3em; font-weight: bold; color: #3498db;" id="distanceValue">--</div>
+        <div style="font-size: 1.1em; color: #666; margin-top: 10px;">Distance to Obstacle (cm)</div>
+        <div id="obstacleWarning" style="margin-top: 15px; padding: 10px; border-radius: 8px; font-weight: 600;"></div>
+    </div>
+</div>
+
+<script>
+let obstacleStatusInterval = null;
+
+// Check current mode status
+async function checkObstacleStatus() {
+    try {
+        const res = await fetch("/api/live");
+        const data = await res.json();
+        
+        const statusDiv = document.getElementById("obstacleStatus");
+        const mode = data.mode || "unknown";
+        const distance = data.ultrasonic !== "N/A" ? parseFloat(data.ultrasonic) : null;
+        
+        // Update distance display
+        if (distance !== null && !isNaN(distance)) {
+            document.getElementById("distanceValue").innerText = distance.toFixed(1) + " cm";
+            
+            // Update warning based on distance
+            const warningDiv = document.getElementById("obstacleWarning");
+            if (distance < 20) {
+                warningDiv.innerHTML = "🚨 OBSTACLE DETECTED - Too Close!";
+                warningDiv.style.backgroundColor = "#f8d7da";
+                warningDiv.style.color = "#721c24";
+                warningDiv.style.border = "2px solid #e74c3c";
+            } else if (distance < 50) {
+                warningDiv.innerHTML = "⚠️ Obstacle Nearby - Caution";
+                warningDiv.style.backgroundColor = "#fff3cd";
+                warningDiv.style.color = "#856404";
+                warningDiv.style.border = "2px solid #f39c12";
+            } else {
+                warningDiv.innerHTML = "✅ Clear Path - No Obstacles";
+                warningDiv.style.backgroundColor = "#d4edda";
+                warningDiv.style.color = "#155724";
+                warningDiv.style.border = "2px solid #27ae60";
+            }
+        } else {
+            document.getElementById("distanceValue").innerText = "--";
+            document.getElementById("obstacleWarning").innerHTML = "";
+        }
+        
+        // Update status display
+        if (mode === "obstacle_avoidance" || mode === "obstacle") {
+            statusDiv.innerHTML = `
+                <div class="status-icon" style="color: #3498db; font-size: 3em;">✅</div>
+                <div class="status-text" style="color: #3498db; font-size: 1.3em; font-weight: 600;">Obstacle Avoidance ACTIVE</div>
+                <div style="margin-top: 10px; font-size: 0.95em; color: #666;">Car is navigating autonomously</div>
+            `;
+            statusDiv.style.backgroundColor = "#d6eaf8";
+            statusDiv.style.border = "3px solid #3498db";
+        } else {
+            statusDiv.innerHTML = `
+                <div class="status-icon" style="color: #95a5a6; font-size: 3em;">⏸️</div>
+                <div class="status-text" style="color: #95a5a6; font-size: 1.3em; font-weight: 600;">Obstacle Avoidance INACTIVE</div>
+                <div style="margin-top: 10px; font-size: 0.95em; color: #666;">Current mode: ${mode}</div>
+            `;
+            statusDiv.style.backgroundColor = "#f8f9fa";
+            statusDiv.style.border = "3px solid #95a5a6";
+        }
+    } catch (error) {
+        console.error("Status check error:", error);
+    }
+}
+
+// Start obstacle avoidance
+async function startObstacleAvoidance() {
+    const msgDiv = document.getElementById("controlMessage");
+    msgDiv.style.display = "block";
+    msgDiv.style.backgroundColor = "#fff3cd";
+    msgDiv.style.border = "2px solid #f39c12";
+    msgDiv.innerHTML = "⏳ Starting obstacle avoidance...";
+    
+    try {
+        const res = await fetch("/api/control", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                device: "mode",
+                value: "obstacle_avoidance"
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === "ok") {
+            msgDiv.style.backgroundColor = "#d6eaf8";
+            msgDiv.style.border = "2px solid #3498db";
+            msgDiv.innerHTML = "✅ Obstacle avoidance started successfully!";
+            setTimeout(() => checkObstacleStatus(), 500);
+        } else {
+            throw new Error("Command failed");
+        }
+    } catch (error) {
+        console.error("Start error:", error);
+        msgDiv.style.backgroundColor = "#f8d7da";
+        msgDiv.style.border = "2px solid #e74c3c";
+        msgDiv.innerHTML = "❌ Failed to start obstacle avoidance. Check backend connection.";
+    }
+}
+
+// Stop obstacle avoidance
+async function stopObstacleAvoidance() {
+    const msgDiv = document.getElementById("controlMessage");
+    msgDiv.style.display = "block";
+    msgDiv.style.backgroundColor = "#fff3cd";
+    msgDiv.style.border = "2px solid #f39c12";
+    msgDiv.innerHTML = "⏳ Stopping obstacle avoidance...";
+    
+    try {
+        const res = await fetch("/api/control", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                device: "mode",
+                value: "manual"
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === "ok") {
+            msgDiv.style.backgroundColor = "#d4edda";
+            msgDiv.style.border = "2px solid #27ae60";
+            msgDiv.innerHTML = "✅ Obstacle avoidance stopped. Switched to manual mode.";
+            setTimeout(() => checkObstacleStatus(), 500);
+        } else {
+            throw new Error("Command failed");
+        }
+    } catch (error) {
+        console.error("Stop error:", error);
+        msgDiv.style.backgroundColor = "#f8d7da";
+        msgDiv.style.border = "2px solid #e74c3c";
+        msgDiv.innerHTML = "❌ Failed to stop obstacle avoidance. Check backend connection.";
+    }
+}
+
+// Initialize
+checkObstacleStatus();
+obstacleStatusInterval = setInterval(checkObstacleStatus, 2000);
+
+// Cleanup
+window.addEventListener('beforeunload', () => {
+    if (obstacleStatusInterval) clearInterval(obstacleStatusInterval);
+});
+</script>
+
+<style>
+.mode-status {
+    padding: 30px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.status-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.status-text {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #2980b9, #21618c);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+}
+</style>
+
+{% endblock %}

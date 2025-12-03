@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Hero Section with Gradient Background -->
+<div class="hero-home">
+    <div class="hero-content">
+        <h1 class="hero-title">🚗 Smart Car Project</h1>
+        <p class="hero-subtitle">Your IoT-powered robotic car controller and telemetry dashboard</p>
+        <p class="hero-description">Experience autonomous driving with line tracking, obstacle avoidance, and real-time monitoring</p>
+        
+        <div class="hero-buttons">
+            <a href="/sensors" class="btn btn-primary">📊 View Dashboard</a>
+            <a href="/control" class="btn btn-secondary">🎮 Control Car</a>
+        </div>
+    </div>
+    
+    <div class="hero-image">
+        <img src="https://i.imgur.com/7yUvePI.png" alt="Smart Car" class="floating-car">
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="features-section">
+    <h2 class="section-title">✨ Key Features</h2>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📡</div>
+            <h3>Real-Time Monitoring</h3>
+            <p>Track IR, ultrasonic, and speed sensors with live updates every 1.5 seconds</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🛤️</div>
+            <h3>Line Tracking</h3>
+            <p>Autonomous line following using infrared sensors for precise navigation</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🚧</div>
+            <h3>Obstacle Avoidance</h3>
+            <p>Intelligent collision prevention with ultrasonic distance detection</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🎮</div>
+            <h3>Manual Control</h3>
+            <p>Full directional control with forward, backward, left, and right movements</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3>Historical Data</h3>
+            <p>View and analyze sensor data from any date with interactive charts</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">☁️</div>
+            <h3>Cloud Integration</h3>
+            <p>Adafruit IO integration with PostgreSQL cloud database synchronization</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Sensors Tracked</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Control Modes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Cloud Monitoring</div>
+    </div>
+</div>
+
+<!-- Technology Stack -->
+<div class="card tech-stack">
+    <h2 style="text-align: center; margin-bottom: 25px;">🔧 Built With</h2>
+    <div class="tech-badges">
+        <span class="tech-badge">🐍 Python</span>
+        <span class="tech-badge">🌐 Flask</span>
+        <span class="tech-badge">📊 Chart.js</span>
+        <span class="tech-badge">🗄️ PostgreSQL</span>
+        <span class="tech-badge">📡 Adafruit IO</span>
+        <span class="tech-badge">🤖 IoT</span>
+        <span class="tech-badge">🎨 CSS3</span>
+        <span class="tech-badge">⚡ JavaScript</span>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="cta-section">
+    <h2>Ready to Explore?</h2>
+    <p>Start monitoring your smart car's performance and take control</p>
+    <a href="/sensors" class="btn btn-large">🚀 Get Started</a>
+</div>
+
+<style>
+/* Hero Home Section */
+.hero-home {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 30px;
+    border-radius: 20px;
+    margin: 30px auto;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+}
+
+.hero-content {
+    flex: 1;
+    min-width: 300px;
+    color: white;
+}
+
+.hero-title {
+    font-size: 3em;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.hero-description {
+    font-size: 1.1em;
+    opacity: 0.95;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: white;
+    color: #667eea;
+    padding: 15px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    border: 2px solid white;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px);
+}
+
+.hero-image {
+    flex: 0 0 300px;
+    text-align: center;
+}
+
+.floating-car {
+    width: 280px;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Features Section */
+.features-section {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    font-weight: 700;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.feature-card {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.feature-icon {
+    font-size: 3.5em;
+    margin-bottom: 15px;
+}
+
+.feature-card h3 {
+    font-size: 1.4em;
+    margin-bottom: 12px;
+    color: var(--accent);
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1.05em;
+}
+
+body.dark .feature-card {
+    background: var(--card-dark);
+}
+
+body.dark .feature-card p {
+    color: #b0b0b0;
+}
+
+/* Stats Section */
+.stats-section {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+    min-width: 200px;
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+}
+
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    box-shadow: 0 6px 20px rgba(67, 233, 123, 0.4);
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+.stat-number {
+    font-size: 3em;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 1.1em;
+    font-weight: 500;
+    opacity: 0.95;
+}
+
+/* Technology Stack */
+.tech-stack {
+    text-align: center;
+}
+
+.tech-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.tech-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1.05em;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.tech-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.5);
+}
+
+/* Call to Action */
+.cta-section {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    padding: 60px 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 900px;
+    margin: 60px auto 30px;
+    color: white;
+    box-shadow: 0 10px 40px rgba(240, 147, 251, 0.4);
+}
+
+.cta-section h2 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.cta-section p {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+    opacity: 0.95;
+}
+
+.btn-large {
+    background: white;
+    color: #f5576c;
+    padding: 18px 40px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.2em;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-large:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-home {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .hero-title {
+        font-size: 2.2em;
+    }
+    
+    .hero-buttons {
+        justify-content: center;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+{% endblock %}

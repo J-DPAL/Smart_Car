@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero" style="margin-top: 20px; margin-bottom: 30px;">
+    <h1>🛤️ Line Tracking System</h1>
+    <p style="font-size: 1.1em; color: #666;">Autonomous line following mode</p>
+</div>
+
+<!-- Status Card -->
+<div class="card" style="text-align: center; max-width: 500px;">
+    <div id="lineStatus" class="mode-status">
+        <div class="status-icon">🔄</div>
+        <div class="status-text">Checking status...</div>
+    </div>
+</div>
+
+<!-- Control Card -->
+<div class="card">
+    <h2>🎮 Line Tracking Controls</h2>
+    <p>The line tracking system is <strong>active by default</strong>. Use these controls to start or stop the line following algorithm.</p>
+    
+    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px; flex-wrap: wrap;">
+        <button class="btn btn-success" onclick="startLineTracking()" id="startBtn">
+            ▶️ Start Line Tracking
+        </button>
+        <button class="btn btn-danger" onclick="stopLineTracking()" id="stopBtn">
+            ⏹️ Stop Line Tracking
+        </button>
+    </div>
+    
+    <div id="controlMessage" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
+</div>
+
+<!-- Information Card -->
+<div class="card">
+    <h3>ℹ️ How It Works</h3>
+    <ul style="line-height: 1.8; font-size: 1.05em;">
+        <li><strong>IR Sensor:</strong> Detects the line on the ground</li>
+        <li><strong>Automatic Steering:</strong> Car adjusts direction to follow the line</li>
+        <li><strong>Default Mode:</strong> Line tracking is enabled automatically when the car starts</li>
+        <li><strong>Manual Override:</strong> Stop the algorithm to switch to manual control</li>
+    </ul>
+</div>
+
+<!-- Live Sensor Data -->
+<div class="card">
+    <h3>📊 IR Sensor Reading</h3>
+    <div style="text-align: center; padding: 20px;">
+        <div style="font-size: 3em; font-weight: bold; color: #2563eb;" id="irValue">--</div>
+        <div style="font-size: 1.1em; color: #666; margin-top: 10px;">Line Detection Status</div>
+    </div>
+</div>
+
+<script>
+let lineStatusInterval = null;
+
+// Check current mode status
+async function checkLineStatus() {
+    try {
+        const res = await fetch("/api/live");
+        const data = await res.json();
+        
+        const statusDiv = document.getElementById("lineStatus");
+        const mode = data.mode || "unknown";
+        const irValue = data.ir !== "N/A" ? data.ir : "--";
+        
+        // Update IR sensor display
+        document.getElementById("irValue").innerText = irValue;
+        
+        // Update status display
+        if (mode === "line_tracking" || mode === "line") {
+            statusDiv.innerHTML = `
+                <div class="status-icon" style="color: #27ae60; font-size: 3em;">✅</div>
+                <div class="status-text" style="color: #27ae60; font-size: 1.3em; font-weight: 600;">Line Tracking ACTIVE</div>
+                <div style="margin-top: 10px; font-size: 0.95em; color: #666;">Car is following the line</div>
+            `;
+            statusDiv.style.backgroundColor = "#d4edda";
+            statusDiv.style.border = "3px solid #27ae60";
+        } else {
+            statusDiv.innerHTML = `
+                <div class="status-icon" style="color: #95a5a6; font-size: 3em;">⏸️</div>
+                <div class="status-text" style="color: #95a5a6; font-size: 1.3em; font-weight: 600;">Line Tracking INACTIVE</div>
+                <div style="margin-top: 10px; font-size: 0.95em; color: #666;">Current mode: ${mode}</div>
+            `;
+            statusDiv.style.backgroundColor = "#f8f9fa";
+            statusDiv.style.border = "3px solid #95a5a6";
+        }
+    } catch (error) {
+        console.error("Status check error:", error);
+    }
+}
+
+// Start line tracking
+async function startLineTracking() {
+    const msgDiv = document.getElementById("controlMessage");
+    msgDiv.style.display = "block";
+    msgDiv.style.backgroundColor = "#fff3cd";
+    msgDiv.style.border = "2px solid #f39c12";
+    msgDiv.innerHTML = "⏳ Starting line tracking...";
+    
+    try {
+        const res = await fetch("/api/control", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                device: "mode",
+                value: "start"
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === "ok") {
+            msgDiv.style.backgroundColor = "#d4edda";
+            msgDiv.style.border = "2px solid #27ae60";
+            msgDiv.innerHTML = "✅ Line tracking started successfully!";
+            setTimeout(() => checkLineStatus(), 500);
+        } else {
+            throw new Error("Command failed");
+        }
+    } catch (error) {
+        console.error("Start error:", error);
+        msgDiv.style.backgroundColor = "#f8d7da";
+        msgDiv.style.border = "2px solid #e74c3c";
+        msgDiv.innerHTML = "❌ Failed to start line tracking. Check backend connection.";
+    }
+}
+
+// Stop line tracking
+async function stopLineTracking() {
+    const msgDiv = document.getElementById("controlMessage");
+    msgDiv.style.display = "block";
+    msgDiv.style.backgroundColor = "#fff3cd";
+    msgDiv.style.border = "2px solid #f39c12";
+    msgDiv.innerHTML = "⏳ Stopping line tracking...";
+    
+    try {
+        const res = await fetch("/api/control", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                device: "mode",
+                value: "stop"
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.status === "ok") {
+            msgDiv.style.backgroundColor = "#d4edda";
+            msgDiv.style.border = "2px solid #27ae60";
+            msgDiv.innerHTML = "✅ Line tracking stopped. Switched to manual mode.";
+            setTimeout(() => checkLineStatus(), 500);
+        } else {
+            throw new Error("Command failed");
+        }
+    } catch (error) {
+        console.error("Stop error:", error);
+        msgDiv.style.backgroundColor = "#f8d7da";
+        msgDiv.style.border = "2px solid #e74c3c";
+        msgDiv.innerHTML = "❌ Failed to stop line tracking. Check backend connection.";
+    }
+}
+
+// Initialize
+checkLineStatus();
+lineStatusInterval = setInterval(checkLineStatus, 2000);
+
+// Cleanup
+window.addEventListener('beforeunload', () => {
+    if (lineStatusInterval) clearInterval(lineStatusInterval);
+});
+</script>
+
+<style>
+.mode-status {
+    padding: 30px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.status-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.status-text {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #229954, #27ae60);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+}
+</style>
+
+{% endblock %}

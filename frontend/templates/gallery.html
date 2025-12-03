@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero" style="margin-top: 20px; margin-bottom: 30px;">
+    <h1>📸 Image Gallery</h1>
+    <p style="font-size: 1.1em; color: #666;">View all captured photos from your smart car</p>
+</div>
+
+<!-- Latest Image Card -->
+<div class="card" style="max-width: 800px;">
+    <h2 style="text-align: center; margin-bottom: 20px;">🌟 Latest Capture</h2>
+    <div id="latestImageContainer" style="text-align: center;">
+        <p style="color: #666;">Loading latest image...</p>
+    </div>
+</div>
+
+<!-- Gallery Grid -->
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <h2>🖼️ All Captures</h2>
+        <button class="btn" onclick="refreshGallery()" id="refreshBtn">
+            🔄 Refresh
+        </button>
+    </div>
+    
+    <div id="galleryStats" style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 20px;">
+        <span id="imageCount">Loading...</span>
+    </div>
+    
+    <div id="galleryGrid" class="gallery-grid">
+        <p style="text-align: center; color: #666;">Loading images...</p>
+    </div>
+    
+    <div id="galleryMessage" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
+</div>
+
+<!-- Image Modal for Full View -->
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <div id="modalCaption"></div>
+</div>
+
+<script>
+let allImages = [];
+
+// Load latest image
+async function loadLatestImage() {
+    try {
+        const res = await fetch("/api/images/latest");
+        const data = await res.json();
+        
+        const container = document.getElementById("latestImageContainer");
+        
+        if (data.status === "ok" && data.image) {
+            const timestamp = new Date(data.image.timestamp * 1000).toLocaleString();
+            container.innerHTML = `
+                <div class="latest-image-wrapper">
+                    <img src="${data.image.url}" alt="Latest capture" class="latest-image" onclick="openModal('${data.image.url}', '${data.image.filename}')">
+                    <div style="margin-top: 15px; color: #666;">
+                        <strong>${data.image.filename}</strong><br>
+                        <small>Captured: ${timestamp}</small>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <p style="color: #999;">📭 No images captured yet. Use the Control page to take photos!</p>
+                <a href="/control" class="btn" style="display: inline-block; margin-top: 15px;">
+                    📸 Go to Control Page
+                </a>
+            `;
+        }
+    } catch (error) {
+        console.error("Latest image error:", error);
+        document.getElementById("latestImageContainer").innerHTML = `
+            <p style="color: #e74c3c;">❌ Failed to load latest image</p>
+        `;
+    }
+}
+
+// Load all images in gallery
+async function loadGallery() {
+    const grid = document.getElementById("galleryGrid");
+    const stats = document.getElementById("galleryStats");
+    
+    try {
+        const res = await fetch("/api/images");
+        const data = await res.json();
+        
+        if (data.status === "ok" && data.images && data.images.length > 0) {
+            allImages = data.images;
+            stats.innerHTML = `📊 <strong>${data.count}</strong> image${data.count !== 1 ? 's' : ''} captured`;
+            
+            grid.innerHTML = data.images.map(img => {
+                const timestamp = new Date(img.timestamp * 1000).toLocaleString();
+                const sizeKB = (img.size / 1024).toFixed(1);
+                const imageType = img.filename.startsWith('manual') ? 'Manual' : 
+                                img.filename.startsWith('obstacle') ? 'Obstacle' : 'Capture';
+                
+                return `
+                    <div class="gallery-item">
+                        <div class="gallery-image-wrapper" onclick="openModal('${img.url}', '${img.filename}')">
+                            <img src="${img.url}" alt="${img.filename}" class="gallery-image">
+                            <div class="gallery-overlay">
+                                <span class="gallery-zoom">🔍 View Full</span>
+                            </div>
+                        </div>
+                        <div class="gallery-info">
+                            <div class="gallery-badge">${imageType}</div>
+                            <div class="gallery-filename">${img.filename}</div>
+                            <div class="gallery-meta">
+                                <small>📅 ${timestamp}</small><br>
+                                <small>💾 ${sizeKB} KB</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            stats.innerHTML = '📊 No images found';
+            grid.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <div style="font-size: 4em; margin-bottom: 20px;">📸</div>
+                    <h3>No Images Yet</h3>
+                    <p>Capture your first photo using the Control page!</p>
+                    <a href="/control" class="btn" style="display: inline-block; margin-top: 15px;">
+                        📸 Take Photo
+                    </a>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error("Gallery load error:", error);
+        grid.innerHTML = `
+            <p style="text-align: center; color: #e74c3c;">❌ Failed to load gallery</p>
+        `;
+    }
+}
+
+// Refresh gallery
+async function refreshGallery() {
+    const btn = document.getElementById("refreshBtn");
+    const msg = document.getElementById("galleryMessage");
+    
+    btn.disabled = true;
+    btn.innerHTML = "🔄 Refreshing...";
+    
+    msg.style.display = "block";
+    msg.style.backgroundColor = "#fff3cd";
+    msg.style.border = "2px solid #f39c12";
+    msg.innerHTML = "⏳ Refreshing gallery...";
+    
+    await loadLatestImage();
+    await loadGallery();
+    
+    btn.disabled = false;
+    btn.innerHTML = "🔄 Refresh";
+    
+    msg.style.backgroundColor = "#d4edda";
+    msg.style.border = "2px solid #27ae60";
+    msg.innerHTML = "✅ Gallery refreshed!";
+    
+    setTimeout(() => {
+        msg.style.display = "none";
+    }, 2000);
+}
+
+// Open image in modal
+function openModal(url, filename) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImage");
+    const caption = document.getElementById("modalCaption");
+    
+    modal.style.display = "flex";
+    modalImg.src = url;
+    caption.innerHTML = filename;
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById("imageModal").style.display = "none";
+}
+
+// Keyboard shortcut to close modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+
+// Initialize gallery
+loadLatestImage();
+loadGallery();
+
+// Auto-refresh every 30 seconds
+setInterval(() => {
+    loadLatestImage();
+    loadGallery();
+}, 30000);
+</script>
+
+<style>
+/* Latest Image */
+.latest-image-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.latest-image {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.latest-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.gallery-item {
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow);
+}
+
+.gallery-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #f0f0f0;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-image-wrapper:hover .gallery-image {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-image-wrapper:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.gallery-zoom {
+    color: white;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.gallery-info {
+    padding: 15px;
+}
+
+.gallery-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.gallery-filename {
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-size: 0.95em;
+    word-break: break-all;
+}
+
+.gallery-meta {
+    color: #666;
+    font-size: 0.85em;
+    line-height: 1.6;
+}
+
+body.dark .gallery-meta {
+    color: #999;
+}
+
+body.dark .gallery-image-wrapper {
+    background: #2a2a2b;
+}
+
+/* Image Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    padding: 20px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.95);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+    position: absolute;
+    top: 30px;
+    right: 45px;
+    color: #fff;
+    font-size: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.modal-close:hover {
+    color: #f39c12;
+}
+
+#modalCaption {
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.1em;
+    margin-top: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+    
+    .gallery-image-wrapper {
+        height: 150px;
+    }
+    
+    .modal-close {
+        top: 15px;
+        right: 25px;
+        font-size: 35px;
+    }
+}
+</style>
+
+{% endblock %}

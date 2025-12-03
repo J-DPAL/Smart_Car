@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<div class="about-hero">
+    <h1>📖 About the Smart Car Project</h1>
+    <p class="about-tagline">Innovative IoT solution for autonomous vehicle control and monitoring</p>
+</div>
+
+<!-- Project Overview -->
+<div class="card about-overview">
+    <div class="about-icon">🚗</div>
+    <h2>Project Overview</h2>
+    <p class="about-description">
+        This project implements a comprehensive <strong>IoT Smart Car system</strong> featuring advanced 
+        autonomous capabilities including line tracking, obstacle avoidance, real-time telemetry monitoring, 
+        and cloud-based data synchronization. Built with modern web technologies and IoT protocols, 
+        the system provides a complete solution for robotic car control and analytics.
+    </p>
+</div>
+
+<!-- Key Technologies -->
+<div class="card">
+    <h2 style="text-align: center; margin-bottom: 30px;">🔧 Key Technologies</h2>
+    <div class="tech-grid">
+        <div class="tech-item">
+            <div class="tech-emoji">🐍</div>
+            <h4>Python & Flask</h4>
+            <p>Backend server and API endpoints</p>
+        </div>
+        <div class="tech-item">
+            <div class="tech-emoji">📡</div>
+            <h4>Adafruit IO</h4>
+            <p>Real-time MQTT communication</p>
+        </div>
+        <div class="tech-item">
+            <div class="tech-emoji">🗄️</div>
+            <h4>PostgreSQL</h4>
+            <p>Cloud database storage</p>
+        </div>
+        <div class="tech-item">
+            <div class="tech-emoji">📊</div>
+            <h4>Chart.js</h4>
+            <p>Data visualization</p>
+        </div>
+        <div class="tech-item">
+            <div class="tech-emoji">🤖</div>
+            <h4>Raspberry Pi</h4>
+            <p>IoT device control</p>
+        </div>
+        <div class="tech-item">
+            <div class="tech-emoji">☁️</div>
+            <h4>Cloud Sync</h4>
+            <p>Data synchronization</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Breakdown -->
+<div class="card features-breakdown">
+    <h2 style="text-align: center; margin-bottom: 30px;">✨ Core Features</h2>
+    <div class="feature-list">
+        <div class="feature-item">
+            <span class="feature-bullet">🛤️</span>
+            <div>
+                <strong>Line Tracking Algorithm</strong>
+                <p>Autonomous line following using IR sensors with real-time path correction</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-bullet">🚧</span>
+            <div>
+                <strong>Obstacle Avoidance System</strong>
+                <p>Ultrasonic-based collision detection with intelligent navigation responses</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-bullet">📈</span>
+            <div>
+                <strong>Real-Time Monitoring</strong>
+                <p>Live sensor data dashboard with automatic refresh and status indicators</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-bullet">📊</span>
+            <div>
+                <strong>Historical Analytics</strong>
+                <p>Interactive charts showing sensor trends over time with date selection</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-bullet">🎮</span>
+            <div>
+                <strong>Manual Control Interface</strong>
+                <p>Full directional control with responsive web-based controller</p>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="feature-bullet">☁️</span>
+            <div>
+                <strong>Cloud Integration</strong>
+                <p>Automatic data synchronization with cloud database and Adafruit IO</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Team Section -->
+<div class="team-section">
+    <h2 class="team-title">👥 Project Team</h2>
+    <p class="team-subtitle">Meet the developers behind this innovative IoT project</p>
+    
+    <div class="team-container-enhanced">
+        <div class="team-card-enhanced">
+            <div class="team-image-wrapper">
+                <img src="https://i.imgur.com/7yUvePI.png" alt="Jean-David">
+            </div>
+            <div class="team-info">
+                <h3>Jean-David</h3>
+                <p class="team-role">🔧 Full-Stack Developer</p>
+                <div class="team-skills">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Flask</span>
+                    <span class="skill-tag">IoT</span>
+                    <span class="skill-tag">Web Dev</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="team-card-enhanced">
+            <div class="team-image-wrapper">
+                <img src="https://i.imgur.com/7yUvePI.png" alt="Jose">
+            </div>
+            <div class="team-info">
+                <h3>Jose</h3>
+                <p class="team-role">💻 Full-Stack Developer</p>
+                <div class="team-skills">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Flask</span>
+                    <span class="skill-tag">IoT</span>
+                    <span class="skill-tag">Web Dev</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Project Stats -->
+<div class="card project-stats">
+    <h3 style="text-align: center; margin-bottom: 25px;">📊 Project Statistics</h3>
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Sensors Integrated</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">6</div>
+            <div class="stat-label">Web Pages</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Control Modes</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Cloud Connected</div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer with Copyright -->
+<div class="about-footer">
+    <p class="copyright">© 2025 Smart Car Project. All rights reserved.</p>
+    <p class="attribution">Developed as part of IoT: Design and Prototyping of Connected Devices</p>
+    <p class="institution">Champlain College Saint-Lambert</p>
+</div>
+
+<style>
+/* About Hero */
+.about-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 30px;
+    border-radius: 20px;
+    margin: 30px auto;
+    max-width: 1200px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+}
+
+.about-hero h1 {
+    font-size: 3em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.about-tagline {
+    font-size: 1.3em;
+    opacity: 0.95;
+}
+
+/* About Overview */
+.about-overview {
+    text-align: center;
+    max-width: 900px;
+}
+
+.about-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.about-overview h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+
+.about-description {
+    font-size: 1.15em;
+    line-height: 1.8;
+    color: #555;
+}
+
+body.dark .about-description {
+    color: #b0b0b0;
+}
+
+/* Tech Grid */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.tech-item {
+    text-align: center;
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.tech-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .tech-item {
+    background: #2a2a2b;
+}
+
+.tech-emoji {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.tech-item h4 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+    color: var(--accent);
+}
+
+.tech-item p {
+    color: #666;
+    font-size: 0.95em;
+}
+
+body.dark .tech-item p {
+    color: #999;
+}
+
+/* Features Breakdown */
+.features-breakdown {
+    max-width: 900px;
+}
+
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateX(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.dark .feature-item {
+    background: #2a2a2b;
+}
+
+.feature-bullet {
+    font-size: 2em;
+    flex-shrink: 0;
+}
+
+.feature-item strong {
+    display: block;
+    font-size: 1.15em;
+    margin-bottom: 5px;
+    color: var(--accent);
+}
+
+.feature-item p {
+    color: #666;
+    margin: 0;
+    line-height: 1.6;
+}
+
+body.dark .feature-item p {
+    color: #999;
+}
+
+/* Enhanced Team Section */
+.team-section {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.team-title {
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.team-subtitle {
+    text-align: center;
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+body.dark .team-subtitle {
+    color: #999;
+}
+
+.team-container-enhanced {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.team-card-enhanced {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 30px var(--shadow);
+    text-align: center;
+    max-width: 350px;
+    transition: all 0.3s ease;
+}
+
+.team-card-enhanced:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 40px var(--shadow);
+}
+
+.team-image-wrapper {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid var(--accent);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.team-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-info h3 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+.team-role {
+    font-size: 1.15em;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+body.dark .team-role {
+    color: #999;
+}
+
+.team-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.skill-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+/* Project Stats */
+.project-stats {
+    max-width: 900px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: scale(1.05);
+}
+
+.stat-value {
+    font-size: 2.5em;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 1em;
+    opacity: 0.95;
+}
+
+/* About Footer */
+.about-footer {
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 60px;
+    background: var(--card);
+    border-radius: 15px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 15px var(--shadow);
+}
+
+.copyright {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+.attribution {
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.institution {
+    color: #999;
+    font-style: italic;
+}
+
+body.dark .attribution {
+    color: #999;
+}
+
+body.dark .institution {
+    color: #777;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-hero h1 {
+        font-size: 2em;
+    }
+    
+    .tech-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+{% endblock %}

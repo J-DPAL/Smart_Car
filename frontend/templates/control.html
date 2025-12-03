@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero" style="margin-top: 20px; margin-bottom: 30px;">
+    <h1>🎮 Manual Car Control</h1>
+    <p style="font-size: 1.1em; color: #666;">Direct control of all car functions</p>
+</div>
+
+<!-- Motor Control Card -->
+<div class="card">
+    <h2 style="text-align:center;">🚗 Motor Control</h2>
+    <p style="text-align:center; color: #666; margin-bottom: 25px;">Use arrow buttons to control car movement</p>
+
+    <div class="control-grid">
+        <span></span>
+        <button class="btn control-btn" onclick="sendControl('forward')">▲</button>
+        <span></span>
+
+        <button class="btn control-btn" onclick="sendControl('left')">◀</button>
+        <button class="btn control-btn" onclick="sendControl('stop')">■</button>
+        <button class="btn control-btn" onclick="sendControl('right')">▶</button>
+
+        <span></span>
+        <button class="btn control-btn" onclick="sendControl('backward')">▼</button>
+        <span></span>
+    </div>
+</div>
+
+<!-- Device Controls Card -->
+<div class="card">
+    <h2 style="text-align:center;">🔧 Device Controls</h2>
+    
+    <!-- Buzzer Control -->
+    <div class="device-section">
+        <h3>🔊 Buzzer Control</h3>
+        <div class="button-group">
+            <button class="btn btn-success" onclick="sendControl('buzzer_on')">
+                🔔 Buzzer ON
+            </button>
+            <button class="btn btn-danger" onclick="sendControl('buzzer_off')">
+                🔕 Buzzer OFF
+            </button>
+        </div>
+    </div>
+
+    <hr style="margin:30px 0;">
+
+    <!-- LED Control -->
+    <div class="device-section">
+        <h3>💡 LED Control</h3>
+        <p style="color: #666; margin-bottom: 15px;">Control the car's LED lights</p>
+        
+        <div class="led-controls">
+            <div class="led-group">
+                <h4>All LEDs</h4>
+                <div class="button-group">
+                    <button class="btn btn-led-on" onclick="sendControl('led_on')" id="ledAllOn">
+                        💡 All ON
+                    </button>
+                    <button class="btn btn-led-off" onclick="sendControl('led_off')" id="ledAllOff">
+                        ⚫ All OFF
+                    </button>
+                </div>
+            </div>
+
+            <div class="led-group">
+                <h4>LED 1</h4>
+                <div class="button-group">
+                    <button class="btn btn-led-on" onclick="sendControl('led1_on')" id="led1On">
+                        💡 LED 1 ON
+                    </button>
+                    <button class="btn btn-led-off" onclick="sendControl('led1_off')" id="led1Off">
+                        ⚫ LED 1 OFF
+                    </button>
+                </div>
+            </div>
+
+            <div class="led-group">
+                <h4>LED 2</h4>
+                <div class="button-group">
+                    <button class="btn btn-led-on" onclick="sendControl('led2_on')" id="led2On">
+                        💡 LED 2 ON
+                    </button>
+                    <button class="btn btn-led-off" onclick="sendControl('led2_off')" id="led2Off">
+                        ⚫ LED 2 OFF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr style="margin:30px 0;">
+
+    <!-- Camera Control -->
+    <div class="device-section">
+        <h3>📷 Camera Control</h3>
+        <p style="color: #666; margin-bottom: 15px;">Capture images from the car's camera</p>
+        
+        <button class="btn btn-camera" onclick="takePhoto()" id="photoBtn">
+            📸 Take Photo
+        </button>
+        
+        <div id="photoMessage" style="margin-top: 15px; padding: 15px; border-radius: 8px; display: none;"></div>
+        
+        <!-- Last Captured Image Preview -->
+        <div id="lastImagePreview" style="margin-top: 20px; display: none;">
+            <h4 style="margin-bottom: 10px;">Last Captured Image:</h4>
+            <div style="position: relative; max-width: 400px; margin: 0 auto;">
+                <img id="lastCapturedImage" src="" alt="Last capture" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <a href="/gallery" class="btn" style="display: block; margin-top: 15px; text-align: center;">
+                    🖼️ View Gallery
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Command Feedback -->
+<div class="card" style="max-width: 600px;">
+    <h3 style="text-align: center;">📡 Command Status</h3>
+    <div id="commandFeedback" style="padding: 15px; border-radius: 8px; text-align: center; background: #f8f9fa; color: #666;">
+        Ready to send commands...
+    </div>
+</div>
+
+<script>
+async function sendControl(value) {
+    const feedbackDiv = document.getElementById("commandFeedback");
+    
+    // Show loading state
+    feedbackDiv.style.backgroundColor = "#fff3cd";
+    feedbackDiv.style.color = "#856404";
+    feedbackDiv.style.border = "2px solid #f39c12";
+    feedbackDiv.innerHTML = `⏳ Sending command: ${value}...`;
+
+    let payload = {};
+
+    // Determine command type and build payload
+    if (value.startsWith("buzzer")) {
+        payload = {
+            device: "buzzer",
+            value: value
+        };
+    } else if (value.startsWith("led")) {
+        payload = {
+            device: "led",
+            value: value
+        };
+    } else {
+        // Motor commands (forward, backward, left, right, stop)
+        payload = {
+            device: "motor",
+            value: value,
+            mode: "manual"
+        };
+    }
+
+    try {
+        const res = await fetch("/api/control", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        console.log("Control response:", data);
+
+        // Show success feedback
+        if (data.status === "ok") {
+            feedbackDiv.style.backgroundColor = "#d4edda";
+            feedbackDiv.style.color = "#155724";
+            feedbackDiv.style.border = "2px solid #27ae60";
+            feedbackDiv.innerHTML = `✅ Command sent: ${value}`;
+            
+            // Visual feedback for LED buttons
+            updateLEDButtonStates(value);
+        } else {
+            feedbackDiv.style.backgroundColor = "#f8d7da";
+            feedbackDiv.style.color = "#721c24";
+            feedbackDiv.style.border = "2px solid #e74c3c";
+            feedbackDiv.innerHTML = `❌ Command failed: ${value}`;
+        }
+
+        // Reset feedback after 3 seconds
+        setTimeout(() => {
+            feedbackDiv.style.backgroundColor = "#f8f9fa";
+            feedbackDiv.style.color = "#666";
+            feedbackDiv.style.border = "none";
+            feedbackDiv.innerHTML = "Ready to send commands...";
+        }, 3000);
+
+    } catch (err) {
+        console.error("Control error:", err);
+        feedbackDiv.style.backgroundColor = "#f8d7da";
+        feedbackDiv.style.color = "#721c24";
+        feedbackDiv.style.border = "2px solid #e74c3c";
+        feedbackDiv.innerHTML = "❌ Error: Check backend connection";
+    }
+}
+
+async function takePhoto() {
+    const photoBtn = document.getElementById("photoBtn");
+    const photoMsg = document.getElementById("photoMessage");
+    const feedbackDiv = document.getElementById("commandFeedback");
+    
+    // Disable button during capture
+    photoBtn.disabled = true;
+    photoBtn.innerHTML = "📸 Capturing...";
+    photoBtn.style.opacity = "0.6";
+    
+    photoMsg.style.display = "block";
+    photoMsg.style.backgroundColor = "#fff3cd";
+    photoMsg.style.color = "#856404";
+    photoMsg.style.border = "2px solid #f39c12";
+    photoMsg.innerHTML = "⏳ Taking photo...";
+
+    feedbackDiv.style.backgroundColor = "#fff3cd";
+    feedbackDiv.style.color = "#856404";
+    feedbackDiv.style.border = "2px solid #f39c12";
+    feedbackDiv.innerHTML = "📷 Camera capturing image...";
+
+    try {
+        const res = await fetch("/api/control", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                device: "camera",
+                value: "take_photo"
+            })
+        });
+
+        const data = await res.json();
+        console.log("Photo response:", data);
+
+        if (data.status === "ok") {
+            photoMsg.style.backgroundColor = "#d4edda";
+            photoMsg.style.color = "#155724";
+            photoMsg.style.border = "2px solid #27ae60";
+            photoMsg.innerHTML = "✅ Photo captured successfully!";
+            
+            feedbackDiv.style.backgroundColor = "#d4edda";
+            feedbackDiv.style.color = "#155724";
+            feedbackDiv.style.border = "2px solid #27ae60";
+            feedbackDiv.innerHTML = "✅ Photo captured successfully!";
+            
+            // Wait 2 seconds for image to be saved, then load it
+            setTimeout(() => {
+                loadLastCapturedImage();
+            }, 2000);
+        } else {
+            throw new Error("Capture failed");
+        }
+
+        // Hide message after 5 seconds
+        setTimeout(() => {
+            photoMsg.style.display = "none";
+            feedbackDiv.style.backgroundColor = "#f8f9fa";
+            feedbackDiv.style.color = "#666";
+            feedbackDiv.style.border = "none";
+            feedbackDiv.innerHTML = "Ready to send commands...";
+        }, 5000);
+
+    } catch (err) {
+        console.error("Photo error:", err);
+        photoMsg.style.backgroundColor = "#f8d7da";
+        photoMsg.style.color = "#721c24";
+        photoMsg.style.border = "2px solid #e74c3c";
+        photoMsg.innerHTML = "❌ Failed to capture photo. Check backend connection.";
+        
+        feedbackDiv.style.backgroundColor = "#f8d7da";
+        feedbackDiv.style.color = "#721c24";
+        feedbackDiv.style.border = "2px solid #e74c3c";
+        feedbackDiv.innerHTML = "❌ Photo capture failed";
+    } finally {
+        // Re-enable button
+        photoBtn.disabled = false;
+        photoBtn.innerHTML = "📸 Take Photo";
+        photoBtn.style.opacity = "1";
+    }
+}
+
+function loadLastCapturedImage() {
+    fetch('/api/images/latest')
+        .then(response => response.json())
+        .then(data => {
+            if (data.image) {
+                const previewDiv = document.getElementById('lastImagePreview');
+                const img = document.getElementById('lastCapturedImage');
+                img.src = `/images/${data.image}?t=${Date.now()}`; // Add timestamp to prevent caching
+                previewDiv.style.display = 'block';
+                
+                // Scroll to the image smoothly
+                previewDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading last image:', error);
+        });
+}
+
+// Load last captured image on page load if it exists
+window.addEventListener('load', loadLastCapturedImage);
+
+function updateLEDButtonStates(command) {
+    // Visual feedback to show which LEDs are on/off
+    // This is just UI feedback - actual state is controlled by backend
+    const allOnBtn = document.getElementById("ledAllOn");
+    const allOffBtn = document.getElementById("ledAllOff");
+    const led1OnBtn = document.getElementById("led1On");
+    const led1OffBtn = document.getElementById("led1Off");
+    const led2OnBtn = document.getElementById("led2On");
+    const led2OffBtn = document.getElementById("led2Off");
+
+    // Add temporary highlight to the pressed button
+    let targetBtn = null;
+    
+    if (command === "led_on") targetBtn = allOnBtn;
+    else if (command === "led_off") targetBtn = allOffBtn;
+    else if (command === "led1_on") targetBtn = led1OnBtn;
+    else if (command === "led1_off") targetBtn = led1OffBtn;
+    else if (command === "led2_on") targetBtn = led2OnBtn;
+    else if (command === "led2_off") targetBtn = led2OffBtn;
+
+    if (targetBtn) {
+        targetBtn.style.transform = "scale(1.05)";
+        targetBtn.style.boxShadow = "0 0 20px rgba(102, 126, 234, 0.6)";
+        
+        setTimeout(() => {
+            targetBtn.style.transform = "";
+            targetBtn.style.boxShadow = "";
+        }, 500);
+    }
+}
+</script>
+
+<style>
+/* Device Section Styling */
+.device-section {
+    margin: 20px 0;
+}
+
+.device-section h3 {
+    color: var(--accent);
+    margin-bottom: 15px;
+}
+
+.device-section h4 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+body.dark .device-section h4 {
+    color: #bbb;
+}
+
+/* Button Groups */
+.button-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    padding: 12px 24px;
+    font-size: 1.05em;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #229954, #27ae60);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 12px 24px;
+    font-size: 1.05em;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+}
+
+/* LED Controls */
+.led-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.led-group {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-align: center;
+}
+
+body.dark .led-group {
+    background: #2a2a2b;
+}
+
+.btn-led-on {
+    background: linear-gradient(135deg, #f39c12, #f1c40f);
+    color: white;
+    padding: 12px 24px;
+    font-size: 1.05em;
+    transition: all 0.3s ease;
+}
+
+.btn-led-on:hover {
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+}
+
+.btn-led-off {
+    background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+    color: white;
+    padding: 12px 24px;
+    font-size: 1.05em;
+}
+
+.btn-led-off:hover {
+    background: linear-gradient(135deg, #6c7a89, #7f8c8d);
+}
+
+/* Camera Button */
+.btn-camera {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 15px 35px;
+    font-size: 1.2em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-camera:hover {
+    background: linear-gradient(135deg, #2980b9, #21618c);
+    box-shadow: 0 0 25px rgba(52, 152, 219, 0.5);
+}
+
+.btn-camera:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .led-controls {
+        grid-template-columns: 1fr;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+}
+</style>
+
+{% endblock %}

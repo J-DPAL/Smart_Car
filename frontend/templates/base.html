@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "Smart Car" }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Chart.js CDN for historical data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+
+<body class="light">
+
+<nav>
+    <div class="left-nav">
+        <a href="/">Home</a>
+        <a href="/sensors">Sensors</a>
+        <a href="/control">Control Car</a>
+        <a href="/line">Line Tracking</a>
+        <a href="/obstacle">Obstacle Avoidance</a>
+        <a href="/gallery">Gallery</a>
+        <a href="/about">About</a>
+    </div>
+
+    <button id="theme-toggle" class="theme-toggle">Toggle Theme</button>
+</nav>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
