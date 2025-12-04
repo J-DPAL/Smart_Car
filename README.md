@@ -488,6 +488,4 @@ Developed as part of **IoT: Design and Prototyping of Connected Devices (420-N55
 - **Flask Team** - For the elegant Python web framework
 - **Raspberry Pi Foundation** - For the amazing single-board computer
 
----
 
-**Built with ❤️ by Jean-David & Jose**
