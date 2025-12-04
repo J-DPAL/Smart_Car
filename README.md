@@ -391,10 +391,10 @@ GET  /images/<filename>       # Serve image file
 ### MQTT Topics
 
 **Publish (Backend → Cloud):**
-- `JDover9000/feeds/smartcar-telemetry` - Sensor data (JSON)
+- `AIO_USERNAME/feeds/smartcar-telemetry` - Sensor data (JSON)
 
 **Subscribe (Cloud → Backend):**
-- `JDover9000/feeds/smartcar-commands` - Control commands (JSON)
+- `AIO_USERNAME/feeds/smartcar-commands` - Control commands (JSON)
 
 **Command Format:**
 ```json
