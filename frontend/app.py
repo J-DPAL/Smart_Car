@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-import psycopg2
+import psycopg
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 
@@ -42,10 +42,10 @@ os.makedirs(CAPTURE_DIR, exist_ok=True)
 # DATABASE CONNECTION
 # -------------------------------------------
 def get_db_connection():
-    return psycopg2.connect(
+    return psycopg.connect(
         host=DB_HOST,
         port=DB_PORT,
-        database=DB_NAME,
+        dbname=DB_NAME,
         user=DB_USER,
         password=DB_PASS
     )
