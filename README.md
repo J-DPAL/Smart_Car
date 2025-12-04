@@ -420,12 +420,8 @@ The live website features:
 - Responsive design with dark mode
 
 ### 📡 Adafruit IO Dashboard
-**Username:** JDover9000  
-**Feeds:**
-- `smartcar-telemetry` - Real-time sensor data
-- `smartcar-commands` - Control commands
+<img width="1688" height="758" alt="image" src="https://github.com/user-attachments/assets/2eb13dd9-67b9-437e-a7df-6ffc2b9ffb54" />
 
-> **Note:** Dashboard is set to private. Screenshots available in project documentation.
 
 ### ☁️ Cloud Database
 **Provider:** Neon.tech (PostgreSQL serverless)  
